@@ -7,6 +7,7 @@ use screencapturekit::sc_output_handler::{SCStreamOutputType, StreamOutput};
 use screencapturekit::sc_shareable_content::SCShareableContent;
 use screencapturekit::sc_stream::SCStream;
 use screencapturekit::sc_stream_configuration::SCStreamConfiguration;
+use screencapturekit_sys::cv_image_buffer_ref::ImageFormat;
 
 use screencapturekit_sys::sc_stream_frame_info::SCFrameStatus;
 
@@ -53,7 +54,7 @@ fn main() {
 
     let sample_buf = rx.recv().unwrap();
     stream.stop_capture();
-    let jpeg = sample_buf.image_buf_ref.unwrap().get_jpeg_data();
+    let jpeg = sample_buf.image_buf_ref.unwrap().get_data(ImageFormat::JPEG);
 
     let mut buffer = File::create("picture.jpg").unwrap();
 

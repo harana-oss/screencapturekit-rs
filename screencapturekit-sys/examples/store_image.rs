@@ -17,6 +17,7 @@ use screencapturekit_sys::{
     stream_error_handler::UnsafeSCStreamError,
     stream_output_handler::UnsafeSCStreamOutput, sc_stream_frame_info::SCFrameStatus,
 };
+use screencapturekit_sys::cv_image_buffer_ref::ImageFormat;
 
 struct StoreImageHandler {
     tx: SyncSender<Id<CMSampleBufferRef>>,
@@ -62,13 +63,13 @@ fn main() {
 
     let sample_buf = rx.recv().unwrap();
     stream.stop_capture();
-    let jpeg = sample_buf.get_image_buffer().unwrap().get_jpeg_data();
+    let png = sample_buf.get_image_buffer().unwrap().get_data(ImageFormat::PNG);
 
-    let mut buffer = File::create("picture.jpg").unwrap();
+    let mut buffer = File::create("picture.png").unwrap();
 
-    buffer.write_all(jpeg.bytes()).unwrap();
+    buffer.write_all(png.bytes()).unwrap();
     Command::new("open")
-        .args(["picture.jpg"])
+        .args(["picture.png"])
         .output()
         .expect("failedto execute process");
 }
